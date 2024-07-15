@@ -36,6 +36,10 @@ variable "vnets" {
          }  
       }
 }
+variable "rules_file" {
+    type = string
+    default = "rules.csv"
+}
 variable "admin_username"{
     type=string
     default = "mass"

@@ -1,34 +1,60 @@
-resource "azurerm_resource_group" "rg" {
+resource "azurerm_resource_group" "spoke_2rg" {
   name     = var.resource_group_name
   location = var.location
 }
-resource "azurerm_virtual_network" "vnets" {
+resource "azurerm_virtual_network" "spoke2-vnet" {
   for_each = var.vnets
 
   name                = each.key
   address_space       = [each.value.address_space]
-  location            = azurerm_resource_group.rg.location
-  resource_group_name = azurerm_resource_group.rg.name
-  depends_on          = [azurerm_resource_group.rg]
+  location            = azurerm_resource_group.spoke_2rg.location
+  resource_group_name = azurerm_resource_group.spoke_2rg.name
+  depends_on          = [azurerm_resource_group.spoke_2rg]
 }
 resource "azurerm_subnet" "subnets" {
   for_each = var.subnets
   name   = each.key
   address_prefixes =[each.value.address_prefix]
-  resource_group_name = azurerm_resource_group.rg.name
-  depends_on = [ azurerm_resource_group.rg , azurerm_virtual_network.vnets]
+  resource_group_name = azurerm_resource_group.spoke_2rg.name
+  depends_on = [ azurerm_resource_group.spoke_2rg , azurerm_virtual_network.spoke2-vnet]
   virtual_network_name = azurerm_virtual_network.vnets["vnets"].name
 }
-resource "azurerm_public_ip" "rg" {
-  name                = "PublicIP"
-  location            = azurerm_resource_group.rg.location
-  resource_group_name = azurerm_resource_group.rg.name
-  allocation_method   = "Static"
+# Create the Network Security Group with Rules
+resource "azurerm_network_security_group" "spoke2-nsg" {
+  for_each = toset(local.subnet_names)
+  name = each.key
+  resource_group_name = azurerm_resource_group.spoke_2rg.name
+  location = azurerm_resource_group.spoke_2rg.location
+
+  dynamic "security_rule" {                           
+     for_each = { for rule in local.rules_csv : rule.name => rule }
+     content {
+      name                       = security_rule.value.name
+      priority                   = security_rule.value.priority
+      direction                  = security_rule.value.direction
+      access                     = security_rule.value.access
+      protocol                   = security_rule.value.protocol
+      source_port_range          = security_rule.value.source_port_range
+      destination_port_range     = security_rule.value.destination_port_range
+      source_address_prefix      = security_rule.value.source_address_prefix
+      destination_address_prefix = security_rule.value.destination_address_prefix
+    }
+  }
+  depends_on = [ azurerm_subnet.subnets ]
+  
 }
-resource "azurerm_application_gateway" "rg" {
+
+resource "azurerm_public_ip" "public-ip" {
+  name                = "PublicIP"
+  location            = azurerm_resource_group.spoke_2rg.location
+  resource_group_name = azurerm_resource_group.spoke_2rg.name
+  allocation_method   = "Static"
+  sku = "standard"
+}
+resource "azurerm_application_gateway" "appgateway" {
 name = "spoke2-appgateway"
-location = azurerm_resource_group.rg.location
-resource_group_name = azurerm_resource_group.rg.name
+location = azurerm_resource_group.spoke_2rg.location
+resource_group_name = azurerm_resource_group.spoke_2rg.name
 sku {
 name = "Standard_v2"
 tier = "Standard_v2"
@@ -42,8 +68,9 @@ subnet_id =azurerm_subnet.subnets.id
  
 frontend_ip_configuration {
 name = "appGatewayFrontendIP"
-public_ip_address_id = azurerm_public_ip.rg.id
+public_ip_address_id = azurerm_public_ip.public-ip.id
 }
+
  
 frontend_port {
 name = "appGatewayFrontendPort"
@@ -82,6 +109,8 @@ http_listener_name = "appGatewayListener"
 backend_address_pool_name = "appGatewayBackendPool"
 backend_http_settings_name = "appGatewayBackendHttpSettings"
 }
+depends_on = [ azurerm_resource_group.spoke_2rg,azurerm_subnet.subnets,azurerm_public_ip.public-ip ]
+
 }
 resource "azurerm_windows_virtual_machine_scale_set" "vmss" {
   name                = "myvmss"
@@ -112,5 +141,44 @@ resource "azurerm_windows_virtual_machine_scale_set" "vmss" {
     version   = "latest"
   }
 
+}
 
+# connect the data from Hub Vnet for peering the Spoke-2 Vnet (Spoke_02 <--> Hub)
+data "azurerm_virtual_network" "hub_vnets" {
+  name = "hub-vnet"
+  resource_group_name = "hub-rg"
+}
+
+# Establish the Peering between Spoke-2 and Hub networks (Spoke_02 <--> Hub)
+resource "azurerm_virtual_network_peering" "Spoke-2-To-hub" {
+  name                      = "Spoke-2-To-hub"
+  resource_group_name       = azurerm_resource_group.spoke_2rg.name
+  virtual_network_name      = azurerm_virtual_network.spoke2-vnet.vnet
+  remote_virtual_network_id = data.azurerm_virtual_network.hub_vnets.id
+  allow_virtual_network_access = true
+  allow_forwarded_traffic   = true
+  allow_gateway_transit     = false
+  use_remote_gateways       = false
+  depends_on = [ azurerm_virtual_network.spoke2-vnet , data.azurerm_virtual_network.hub_vnets  ]
+}
+# Establish the Peering between  Hub and Spoke-2 networks (Hub <--> Spoke_02)
+resource "azurerm_virtual_network_peering" "hub-To-Spoke-2" {
+  name                      = "hub-To-Spoke-2"
+  resource_group_name       = data.azurerm_virtual_network.hub_vnets.resource_group_name
+  virtual_network_name      = data.azurerm_virtual_network.hub_vnets.name
+  remote_virtual_network_id = azurerm_virtual_network.spoke2-vnet.id
+  allow_virtual_network_access = true
+  allow_forwarded_traffic   = true
+  allow_gateway_transit     = false
+  use_remote_gateways       = false
+  depends_on = [ azurerm_virtual_network.spoke2-vnet , data.azurerm_virtual_network.hub_vnets ]
+}
+
+# Creates the Route tables
+resource "azurerm_route_table" "route-table" {
+  name                = "Spoke2-route-table"
+  resource_group_name = azurerm_resource_group.spoke_2rg.name
+  location = azurerm_resource_group.spoke_2rg.location
+  depends_on = [ azurerm_resource_group.spoke_2rg , azurerm_subnet.subnets ]
+}
 

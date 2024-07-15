@@ -36,6 +36,16 @@ variable "subnets" {
             address_prefix="10.0.2.0/24"
          }  
       }
-
+        
+  
+}
+variable "admin_username"{
+    type=string
+    default = "mass"
+}
+variable "admin_password" {
+    type = string
+    default = "aravindhan123@"
+    sensitive =true
   
 }

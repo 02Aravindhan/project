@@ -16,11 +16,11 @@ resource "azurerm_subnet" "subnets" {
 
   name   = each.key
   address_prefixes =[each.value.address_prefix]
-  resource_group_name = azurerm_resource_group.rg.name
+  resource_group_name = azurerm_resource_group.onpremises-rg.name
   depends_on = [ azurerm_resource_group.onpremises-rg , azurerm_virtual_network.onpremises-vnets]
-  virtual_network_name = azurerm_virtual_network.vnets["vnets"].name
+  virtual_network_name = azurerm_virtual_network.onpremises-vnets["vnets"].name
 }
-#create the network interface
+//create the network interface
 resource "azurerm_network_interface" "onpremises-nic" {
   name                = "onpremises-nic"
   location            = azurerm_resource_group.onpremises-rg.location
@@ -33,12 +33,15 @@ resource "azurerm_network_interface" "onpremises-nic" {
   }
   depends_on = [ azurerm_resource_group.onpremises-rg,azurerm_subnet.subnets ]
 }
+
 resource "azurerm_public_ip" "onpremises-ip" {
   name                = "public-ip"
   location            = azurerm_resource_group.onpremises-rg.location
   resource_group_name = azurerm_resource_group.onpremises-rg.name
-  allocation_method   = "Dynamic"
+  sku = "Standard"
+  allocation_method   = "Static"
 }
+
 resource "azurerm_virtual_network_gateway" "onpremises-gateway" {
   name                = "vpn-gateway"
   location            = azurerm_resource_group.onpremises-rg.location
@@ -58,11 +61,12 @@ resource "azurerm_virtual_network_gateway" "onpremises-gateway" {
   }
   depends_on = [ azurerm_resource_group.onpremises-rg,azurerm_subnet.subnets,azurerm_public_ip.onpremises-ip ]
 }
+
 #  the data from Hub Gateway Public_IP (IP_addr)
-#data "azurerm_public_ip" "Hub-VPN-GW-public-ip" {
- # name = "GatewaySubnet-IP"
-  #resource_group_name = "hub-rg"
-#}
+data "azurerm_public_ip" "Hub-VPN-GW-public-ip" {
+ name = "GatewaySubnet-IP"
+  resource_group_name = "hub-rg"
+}
 
 #  the data from hub Virtual Network (address_space)
 data "azurerm_virtual_network" "hub-vnets" {

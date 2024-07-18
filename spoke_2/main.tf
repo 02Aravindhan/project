@@ -17,7 +17,7 @@ resource "azurerm_subnet" "subnets" {
   address_prefixes =[each.value.address_prefix]
   resource_group_name = azurerm_resource_group.spoke_2rg.name
   depends_on = [ azurerm_resource_group.spoke_2rg , azurerm_virtual_network.spoke2-vnet]
-  virtual_network_name = azurerm_virtual_network.vnets["vnets"].name
+  virtual_network_name = azurerm_virtual_network.vnets["spoke2-vnets"].name
 }
 # Create the Network Security Group with Rules
 resource "azurerm_network_security_group" "spoke2-nsg" {
@@ -51,7 +51,7 @@ resource "azurerm_public_ip" "public-ip" {
   allocation_method   = "Static"
   sku = "standard"
 }
-resource "azurerm_application_gateway" "appgateway" {
+resource "azurerm_application_gateway" "spoke2-appgateway" {
 name = "spoke2-appgateway"
 location = azurerm_resource_group.spoke_2rg.location
 resource_group_name = azurerm_resource_group.spoke_2rg.name
@@ -126,7 +126,7 @@ resource "azurerm_windows_virtual_machine_scale_set" "vmss" {
     primary = true
     ip_configuration {
       name = "internal"
-      subnet_id = azurerm_subnet.subnets.id
+      subnet_id = azurerm_subnet.subnets[Subnet1].id
       application_gateway_backend_address_pool_ids = [local.application_gateway_backend_address_pool_ids[0]]
     }
   }
@@ -174,11 +174,11 @@ resource "azurerm_virtual_network_peering" "hub-To-Spoke-2" {
   depends_on = [ azurerm_virtual_network.spoke2-vnet , data.azurerm_virtual_network.hub_vnets ]
 }
 
-# Creates the Route tables
-resource "azurerm_route_table" "route-table" {
-  name                = "Spoke2-route-table"
-  resource_group_name = azurerm_resource_group.spoke_2rg.name
-  location = azurerm_resource_group.spoke_2rg.location
-  depends_on = [ azurerm_resource_group.spoke_2rg , azurerm_subnet.subnets ]
-}
+# # Creates the Route tables
+# resource "azurerm_route_table" "route-table" {
+#   name                = "Spoke2-route-table"
+#   resource_group_name = azurerm_resource_group.spoke_2rg.name
+#   location = azurerm_resource_group.spoke_2rg.location
+#   depends_on = [ azurerm_resource_group.spoke_2rg , azurerm_subnet.subnets ]
+# }
 

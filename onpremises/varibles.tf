@@ -16,7 +16,7 @@ variable "vnets" {
   default = {
     "vnets" = {
         address_space="10.0.0.0/16"
-        vnetname="onpremises-vnet"
+        vnetname="onpremises-vnetsS"
         }
   }
 

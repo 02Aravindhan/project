@@ -16,7 +16,7 @@ variable "vnets" {
   default = {
     "vnets" = {
         address_space="10.1.0.0/16"
-        vnetname="hub-vnet"
+        vnetname="hub-vnets"
         }
   }
 
@@ -31,15 +31,11 @@ variable "subnets" {
             subnetname="AzureFireWallSubnet"
             address_prefix="10.1.0.0/24"
         },
-        "GatewaySubnet" = {
-            subnetname="GatewaySubnet"
+        "GatewaySubnets" = {
+            subnetname="GatewaySubnets"
             address_prefix="10.1.1.0/24"
             },
-         "subnet"={
-            subnetname="subnet"
-            address_prefix="10.1.2.0/24"
          }  
       }
 
   
-}

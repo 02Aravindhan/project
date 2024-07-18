@@ -17,7 +17,7 @@ variable "vnets" {
   default = {
     "vnets" = {
         address_space="10.2.0.0/16"
-        vnetname="spoke1-vnet"
+        vnetname="spoke1-vnets"
         }
   }
 

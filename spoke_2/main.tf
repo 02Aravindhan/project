@@ -44,6 +44,7 @@ resource "azurerm_network_security_group" "spoke2-nsg" {
   
 }
 
+
 resource "azurerm_public_ip" "public-ip" {
   name                = "PublicIP"
   location            = azurerm_resource_group.spoke_2rg.location
@@ -143,15 +144,15 @@ resource "azurerm_windows_virtual_machine_scale_set" "vmss" {
 
 }
 
-# connect the data from Hub Vnet for peering the Spoke-2 Vnet (Spoke_02 <--> Hub)
+# connect the data from Hub Vnet for peering the Spoke_2 Vnet (Spoke_2 <--> Hub)
 data "azurerm_virtual_network" "hub_vnets" {
   name = "hub-vnet"
   resource_group_name = "hub-rg"
 }
 
-# Establish the Peering between Spoke-2 and Hub networks (Spoke_02 <--> Hub)
-resource "azurerm_virtual_network_peering" "Spoke-2-To-hub" {
-  name                      = "Spoke-2-To-hub"
+# Establish the Peering between Spoke_2 and Hub networks (Spoke_2 <--> Hub)
+resource "azurerm_virtual_network_peering" "Spoke_2-To-hub" {
+  name                      = "Spoke_2-To-hub"
   resource_group_name       = azurerm_resource_group.spoke_2rg.name
   virtual_network_name      = azurerm_virtual_network.spoke2-vnet.vnet
   remote_virtual_network_id = data.azurerm_virtual_network.hub_vnets.id
@@ -163,7 +164,7 @@ resource "azurerm_virtual_network_peering" "Spoke-2-To-hub" {
 }
 # Establish the Peering between  Hub and Spoke-2 networks (Hub <--> Spoke_02)
 resource "azurerm_virtual_network_peering" "hub-To-Spoke-2" {
-  name                      = "hub-To-Spoke-2"
+  name                      = "hub-To-Spoke_2"
   resource_group_name       = data.azurerm_virtual_network.hub_vnets.resource_group_name
   virtual_network_name      = data.azurerm_virtual_network.hub_vnets.name
   remote_virtual_network_id = azurerm_virtual_network.spoke2-vnet.id
@@ -174,11 +175,30 @@ resource "azurerm_virtual_network_peering" "hub-To-Spoke-2" {
   depends_on = [ azurerm_virtual_network.spoke2-vnet , data.azurerm_virtual_network.hub_vnets ]
 }
 
-# # Creates the Route tables
-# resource "azurerm_route_table" "route-table" {
-#   name                = "Spoke2-route-table"
-#   resource_group_name = azurerm_resource_group.spoke_2rg.name
-#   location = azurerm_resource_group.spoke_2rg.location
-#   depends_on = [ azurerm_resource_group.spoke_2rg , azurerm_subnet.subnets ]
-# }
+
+#route table for connect spoke2 t0 spoke1 through firewall
+
+resource "azurerm_route_table" "spoke2-udr" {
+
+  name = "spoke2-udr-to-firewall"
+  location = azurerm_resource_group.spoke_2rg.location
+  resource_group_name = azurerm_resource_group.spoke_2rg.name
+
+  route {
+    name = "route-to-firewall"
+    address_prefix = "10.3.1.0/24"
+    next_hop_type = "VirtualAppliance"
+    next_hop_in_ip_address = "10.10.3.4"
+  }
+  depends_on = [ azurerm_resource_group.spoke_2rg ]
+  
+}
+
+resource "azurerm_subnet_route_table_association" "spoke1udr_subnet_association" {
+    for_each = var.subnets
+
+    subnet_id = azurerm_subnet.subnets[each.key].id
+    route_table_id = azurerm_route_table.spoke2-udr.id
+    depends_on = [ azurerm_route_table.spoke2-udr,azurerm_subnet.subnets,azurerm_route_table.spoke2-udr ]
+}
 

@@ -31,10 +31,10 @@ variable "subnets" {
             subnetname="AzureFireWallSubnet"
             address_prefix="10.1.0.0/24"
         },
-        "GatewaySubnets" = {
-            subnetname="GatewaySubnets"
+        "GatewaySubnet" = {
+            subnetname="GatewaySubnet"
             address_prefix="10.1.1.0/24"
-            },
+            }
          }  
       }
 

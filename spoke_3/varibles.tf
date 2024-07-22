@@ -1,7 +1,7 @@
 
 variable "resource_group_name"{
     type=string
-    default = "spoke_3rg"
+    default = "spoke-3rg"
 }
 variable "location" {
     type = string

@@ -27,8 +27,8 @@ variable "subnets" {
       address_prefix=string
       }))
       default = {
-        "AzureFireWallSubnet"={
-            subnetname="AzureFireWallSubnet"
+        "AzureFirewallSubnet"={
+            subnetname="AzureFirewallSubnet"
             address_prefix="10.1.0.0/24"
         },
         "GatewaySubnet" = {

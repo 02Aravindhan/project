@@ -12,6 +12,6 @@ output "subnets" {
  output "hub-Public-ip" {
   value = azurerm_public_ip.hub-public-ip
  }
-#   output "hub-Gateway" {
-#   value = azurerm_virtual_network_gateway.hub-gateway
-#  }
+  output "hub-Gateway" {
+  value = azurerm_virtual_network_gateway.hub-gateway
+ }

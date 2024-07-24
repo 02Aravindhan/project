@@ -1,6 +1,3 @@
-data "azurerm_client_config" "current" {}
-data "azuread_client_config" "current" {}
- 
 
 resource "azurerm_resource_group" "spoke_1rg" {
   name     = var.resource_group_name
@@ -24,6 +21,8 @@ resource "azurerm_subnet" "subnets" {
   depends_on = [ azurerm_resource_group.spoke_1rg , azurerm_virtual_network.spoke_1vnets]
   virtual_network_name = azurerm_virtual_network.spoke_1vnets["vnets"].name
 }
+
+//spoke-1 nic
 resource "azurerm_network_interface" "spoke-1nic" {
   for_each = toset([for i in azurerm_subnet.subnets : i.name])
   name                ="${each.key}-nic"
@@ -37,6 +36,11 @@ resource "azurerm_network_interface" "spoke-1nic" {
   }
   depends_on = [ azurerm_resource_group.spoke_1rg,azurerm_subnet.subnets ]
  }
+
+data "azurerm_client_config" "current" {}
+data "azuread_client_config" "current" {}
+
+# key_vault
 resource "azurerm_key_vault" "Key_vault" {
   name                        = "KeyVault8818"
   resource_group_name = azurerm_resource_group.spoke_1rg.name
@@ -150,9 +154,9 @@ resource "azurerm_route_table" "spoke1-udr" {
 
   route {
     name = "route-to-firewall"
-    address_prefix = "10.0.0.0/16"
+    address_prefix = "10.3.0.0/16"
     next_hop_type = "VirtualAppliance"
-    next_hop_in_ip_address = "10.10.3.4"
+    next_hop_in_ip_address = "10.1.3.4"
   
   }
   

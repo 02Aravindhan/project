@@ -18,10 +18,10 @@ output "spoke2-appgateway" {
   value = azurerm_application_gateway.spoke2-appgateway
 }
 
-output "route_table_ids" {
+# output "route_table_ids" {
 
-  value = {
-    spoke1_udr = azurerm_route_table.spoke1-udr.id
-    spoke2_udr = azurerm_route_table.spoke2-udr.id
-  }
-}
+#   value = {
+#     spoke1_udr = azurerm_route_table.spoke1-udr.id
+#     spoke2_udr = azurerm_route_table.spoke2-udr.id
+#   }
+# }

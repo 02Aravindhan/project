@@ -19,4 +19,3 @@ out-test107,107,Outbound,Allow,Tcp,107,107,*,*
 out-test108,108,Outbound,Allow,Tcp,108,108,*,*
 out-test109,109,Outbound,Allow,Tcp,109,109,*,*
 out-test110,110,Outbound,Allow,Tcp,110,110,*,*
-has context menu

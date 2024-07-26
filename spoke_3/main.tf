@@ -73,7 +73,7 @@ resource "azurerm_virtual_network_peering" "hub-To-Spoke3" {
   name                      = "hub-Spoke3"
   resource_group_name       = data.azurerm_virtual_network.hub-vnets.resource_group_name
   virtual_network_name      = data.azurerm_virtual_network.hub-vnets.name
-  remote_virtual_network_id = azurerm_virtual_network.vnets["Spoke3-vnet"].id
+  remote_virtual_network_id = azurerm_virtual_network.spoke-3vnets["vnets"].id
   allow_virtual_network_access = true
   allow_forwarded_traffic   = true
   allow_gateway_transit     = false

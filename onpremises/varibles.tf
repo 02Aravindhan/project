@@ -1,51 +1,44 @@
-variable "resource_group_name"{
-    type=string
-    default = "onpremises-rg"
-}
-variable "location" {
-    type = string
-    default = "east asia"
-  
-}
-variable "vnets" {
-  type = map(object({
-    address_space = string
-    vnetname=string
-    
-  }))
-  default = {
-    "vnets" = {
-        address_space="10.0.0.0/16"
-        vnetname="onpremises-vnetsS"
-        }
+
+variable "resource_group_name" {
+  type = string
+  description = "The name of the Resource Group"
+  validation {
+    condition = length(var.rg_name>0)
+    error_message = "The name must be provided"
   }
 
 }
+variable "location" {
+  type = string
+  description = "The Location of the Resource Group"
+  validation {
+    condition = length(var.rg_location>0)
+    error_message = "The Location must be provided"
+  }
+}
+variable "vnets" {
+  type = map(object({
+    vnet_name = string
+    address_space = string
+  }))
+  description = "The details of the VNET"
+}
+
 variable "subnets" {
-    type = map(object({
-      subnetname =string
-      address_prefix=string
-      }))
-      default = {
-        "GatewaySubnet" = {
-            subnetname="GatewaySubnet"
-            address_prefix="10.0.1.0/24"
-            },
-         "subnet"={
-            subnetname="subnet"
-            address_prefix="10.0.2.0/24"
-         }  
-      }
-        
-  
+  type = map(object({
+    subnet_name = string
+    address_prefix = string
+  }))
+  description = "The details of the Subnets"
 }
-variable "admin_username"{
-    type=string
-    default = "mass"
+
+variable "admin_username" {
+  type        = string
+  description = "The Username of the User"
 }
+
 variable "admin_password" {
-    type = string
-    default = "aravindhan123@"
-    sensitive =true
-  
+  type        = string
+  description = "The Password of the User"
+  sensitive   = true
 }

@@ -94,9 +94,9 @@ resource "azurerm_firewall_policy" "policy" {
 
 #     rule {
 #       name             = "Allow-RDP"
-#       source_addresses = ["103.25.44.14"]   
+#       source_addresses = ["49.37.211.244"]   
 #       destination_ports = ["3389"]
-#       destination_address = azurerm_public_ip.public_ips["AzureFirewallSubnet"].ip_address
+#       destination_address = azurerm_public_ip.public_ips["AzureFirewallsubnet"].ip_address
 #       translated_address = "10.4.2.4"   
 #       translated_port    = "3389"
 #       protocols         = ["TCP"]

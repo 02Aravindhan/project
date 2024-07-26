@@ -1,5 +1,5 @@
 locals{
-   rules_csv = csvdecode(file(var.rules_file))
+   rules = csvdecode(file(var.rules_file))
    subnet_names = [for subnet in azurerm_subnet.subnets : subnet.name]
   //subnetname= [for i in azurerm_subnet.subnets : i.name]
   

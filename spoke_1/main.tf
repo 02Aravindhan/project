@@ -60,30 +60,6 @@ resource "azurerm_key_vault" "Key_vault" {
   }
   depends_on = [ azurerm_resource_group.spoke_1rg ]
 }
-# Create the Network Security Group with Rules
-resource "azurerm_network_security_group" "spoke_1nsg" {
-  for_each = toset(local.subnet_names)
-  name = each.key
-  resource_group_name = azurerm_resource_group.spoke_1rg.name
-  location = azurerm_resource_group.spoke_1rg.location
-
-  dynamic "security_rule" {                           
-     for_each = { for rule in local.rules_csv : rule.name => rule }
-     content {
-      name                       = security_rule.value.name
-      priority                   = security_rule.value.priority
-      direction                  = security_rule.value.direction
-      access                     = security_rule.value.access
-      protocol                   = security_rule.value.protocol
-      source_port_range          = security_rule.value.source_port_range
-      destination_port_range     = security_rule.value.destination_port_range
-      source_address_prefix      = security_rule.value.source_address_prefix
-      destination_address_prefix = security_rule.value.destination_address_prefix
-    }
-  }
-  depends_on = [ azurerm_resource_group.spoke_1rg,azurerm_subnet.subnets ]
-  
-}
 
 // Key vault Username
  
@@ -102,32 +78,61 @@ resource "azurerm_key_vault_secret" "vm_admin_password" {
   key_vault_id = azurerm_key_vault.Key_vault.id
   depends_on = [ azurerm_key_vault.Key_vault ]
 }
- 
 
-#   resource "azurerm_windows_virtual_machine" "spoke_1vm" {
-#   for_each = toset(local.subnetname)
-#   name                  = "${each.key}-vm"
-#   location            = azurerm_resource_group.spoke_1rg.location
-#   resource_group_name = azurerm_resource_group.spoke_1rg.name
-#   size                  = "Standard_DS1_v2"
-#   admin_username        = var.admin_username
-#   admin_password        = var.admin_password
-#   network_interface_ids = [azurerm_network_interface.nic[each.key].id]
+#Create the Network Security Group with Rules
+resource "azurerm_network_security_group" "spoke_1nsg" {
+  for_each = toset(local.subnet_names)
+  name = each.key
+  resource_group_name = azurerm_resource_group.spoke_1rg.name
+  location = azurerm_resource_group.spoke_1rg.location
+
+  dynamic "security_rule" {                           
+     for_each = { for rule in local.rules : rule.name => rule }
+     content {
+      name                       = security_rule.value.name
+      priority                   = security_rule.value.priority
+      direction                  = security_rule.value.direction
+      access                     = security_rule.value.access
+      protocol                   = security_rule.value.protocol
+      source_port_range          = security_rule.value.source_port_range
+      destination_port_range     = security_rule.value.destination_port_range
+      source_address_prefix      = security_rule.value.source_address_prefix
+      destination_address_prefix = security_rule.value.destination_address_prefix
+    }
+  }
+  depends_on = [ azurerm_resource_group.spoke_1rg,azurerm_subnet.subnets ]
+  
+}
+
+
+//spoke_1 vm 
+
+  resource "azurerm_windows_virtual_machine" "spoke_1vm" {
+  for_each = toset(local.subnet_names)
+  name                  = "${each.key}-vm"
+  location            = azurerm_resource_group.spoke_1rg.location
+  resource_group_name = azurerm_resource_group.spoke_1rg.name
+  size                  = "Standard_DS1_v2"
+  admin_username        = var.admin_username
+  admin_password        = var.admin_password
+  network_interface_ids = [azurerm_network_interface.spoke-1nic[each.key].id]
  
-#   os_disk {
-#     caching              = "ReadWrite"
-#     storage_account_type = "Standard_LRS"
-#   }
+  os_disk {
+    caching              = "ReadWrite"
+    storage_account_type = "Standard_LRS"
+  }
   
  
-#   source_image_reference {
-#     publisher = "MicrosoftWindowsServer"
-#     offer     = "WindowsServer"
-#     sku       = "2019-Datacenter"
-#     version   = "latest"
-#   }
-#   depends_on = [azurerm_resource_group.spoke_1rg, azurerm_network_interface.nic,azurerm_key_vault.Key_vault]
-# }
+  source_image_reference {
+    publisher = "MicrosoftWindowsServer"
+    offer     = "WindowsServer"
+    sku       = "2019-Datacenter"
+    version   = "latest"
+  }
+  depends_on = [azurerm_resource_group.spoke_1rg,azurerm_network_interface.spoke-1nic ,azurerm_key_vault.Key_vault]
+}
+
+//storage-account
 
 # resource "azurerm_storage_account" "spoke_1storage-account" {
 #   name                     = "storageaccount"
@@ -138,6 +143,9 @@ resource "azurerm_key_vault_secret" "vm_admin_password" {
 
 #   depends_on = [ azurerm_resource_group.spoke_1rg ]
 # }
+
+//fileshare
+
 # resource "azurerm_storage_share" "spoke_1fileshare" {
 #   name                 = "fileshare"
 #   storage_account_name = azurerm_storage_account.spoke_1storage-account.name
@@ -145,7 +153,9 @@ resource "azurerm_key_vault_secret" "vm_admin_password" {
 #   depends_on = [ azurerm_resource_group.spoke_1rg,azurerm_storage_account.spoke_1storage-account ]
 # }
 
-#route table for connect spoke1 and spoke2 through firewall
+
+//route table for connect spoke1 and spoke2 through firewall
+
 resource "azurerm_route_table" "spoke1-udr" {
 
   name = "spoke1-udr-to-firewall"
@@ -154,21 +164,58 @@ resource "azurerm_route_table" "spoke1-udr" {
 
   route {
     name = "route-to-firewall"
-    address_prefix = "10.3.0.0/16"
+    address_prefix = "10.2.0.0/16"       //spoke_1ip
     next_hop_type = "VirtualAppliance"
-    next_hop_in_ip_address = "10.1.3.4"
+    next_hop_in_ip_address = "10.1.0.4"     //firewall ip
   
   }
-  
+  depends_on = [ azurerm_resource_group.spoke_1rg ]
 }
+
+   
+//spoke_1udr subnet assocate
 
 resource "azurerm_subnet_route_table_association" "spoke1udr_subnet_association" {
     for_each = var.subnets
 
     subnet_id = azurerm_subnet.subnets[each.key].id
     route_table_id = azurerm_route_table.spoke1-udr.id
-    depends_on = [ azurerm_route_table.spoke1-udr,azurerm_subnet.subnets.id ]
+    depends_on = [ azurerm_route_table.spoke1-udr ]
 }
+
+ # connect the data from Hub Vnet for peering the Spoke_1 Vnet (Spoke_1 <--> Hub)
+data "azurerm_virtual_network" "hub_vnets" {
+  name = "hub-vnet"
+  resource_group_name = "hub-rg"
+}
+
+ # Establish the Peering between Spoke_1 and Hub networks (Spoke_1 <--> Hub)
+resource "azurerm_virtual_network_peering" "Spoke_1-To-hub" {
+  name                      = "Spoke_1-To-hub"
+  resource_group_name       = azurerm_resource_group.spoke_1rg.name
+  virtual_network_name      = azurerm_virtual_network.spoke_1vnets[vnets].name
+  remote_virtual_network_id = data.azurerm_virtual_network.hub_vnets.id
+  allow_virtual_network_access = true
+  allow_forwarded_traffic   = true
+  allow_gateway_transit     = false
+  use_remote_gateways       = false
+  depends_on = [ azurerm_virtual_network.spoke_1vnets , data.azurerm_virtual_network.hub_vnets  ]
+}
+# Establish the Peering between  Hub and Spoke_1 networks (Hub <--> Spoke_1)
+resource "azurerm_virtual_network_peering" "hub-To-Spoke-1" {
+  name                      = "hub-To-Spoke_1"
+  resource_group_name       = data.azurerm_virtual_network.hub_vnets.resource_group_name
+  virtual_network_name      = data.azurerm_virtual_network.hub_vnets.name
+  remote_virtual_network_id = azurerm_virtual_network.spoke_1vnets[vnets].id
+  allow_virtual_network_access = true
+  allow_forwarded_traffic   = true
+  allow_gateway_transit     = false
+  use_remote_gateways       = false
+  depends_on = [ azurerm_virtual_network.spoke_1vnets , data.azurerm_virtual_network.hub_vnets ]
+}
+
+
+
 
 
 

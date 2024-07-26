@@ -10,15 +10,16 @@ output "subnets" {
   value = azurerm_subnet.subnets
 }
 
-#  output "spoke_1vm" {
-#    value = azurerm_windows_virtual_machine.spoke_1vm
-#  }
+ output "spoke_1vm" {
+   value = azurerm_windows_virtual_machine.spoke_1vm
+   sensitive = true
+ }
 
 
 
-# output "Key_Vault" {
-#   value = azurerm_key_vault.Key_Vault
-# }
+output "Key_Vault" {
+  value = azurerm_key_vault.Key_vault
+}
 
 
 

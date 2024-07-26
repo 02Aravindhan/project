@@ -147,8 +147,8 @@ resource "azurerm_windows_virtual_machine_scale_set" "vmss" {
     version   = "latest"
   }
 
-}
 
+}
 # # connect the data from Hub Vnet for peering the Spoke_2 Vnet (Spoke_2 <--> Hub)
 # data "azurerm_virtual_network" "hub_vnets" {
 #   name = "hub-vnet"

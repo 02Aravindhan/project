@@ -42,25 +42,25 @@ resource "azurerm_public_ip" "onpremises-ip" {
   allocation_method   = "Static"
 }
 
-resource "azurerm_virtual_network_gateway" "onpremises-gateway" {
-  name                = "vpn-gateway"
-  location            = azurerm_resource_group.onpremises-rg.location
-  resource_group_name = azurerm_resource_group.onpremises-rg.name
-  type                = "Vpn"
-  vpn_type            = "RouteBased"
-  sku                 = "VpnGw1"
-  //gateway_subnet_id   = azurerm_subnet.gateway_subnet.id
+# resource "azurerm_virtual_network_gateway" "onpremises-gateway" {
+#   name                = "vpn-gateway"
+#   location            = azurerm_resource_group.onpremises-rg.location
+#   resource_group_name = azurerm_resource_group.onpremises-rg.name
+#   type                = "Vpn"
+#   vpn_type            = "RouteBased"
+#   sku                 = "VpnGw1"
+#   //gateway_subnet_id   = azurerm_subnet.gateway_subnet.id
 
-  ip_configuration {
-    name                          = "config1"
-    subnet_id = azurerm_subnet.subnets["GatewaySubnet"].id
-    public_ip_address_id          = azurerm_public_ip.onpremises-ip.id
-    private_ip_address_allocation = "Dynamic"
+#   ip_configuration {
+#     name                          = "config1"
+#     subnet_id = azurerm_subnet.subnets["GatewaySubnet"].id
+#     public_ip_address_id          = azurerm_public_ip.onpremises-ip.id
+#     private_ip_address_allocation = "Dynamic"
 
     
-  }
-  depends_on = [ azurerm_resource_group.onpremises-rg,azurerm_subnet.subnets,azurerm_public_ip.onpremises-ip ]
-}
+#   }
+#   depends_on = [ azurerm_resource_group.onpremises-rg,azurerm_subnet.subnets,azurerm_public_ip.onpremises-ip ]
+# }
 
 # #  the data from Hub Gateway Public_IP (IP_addr)
 # data "azurerm_public_ip" "Hub-VPN-GW-public-ip" {
@@ -97,7 +97,8 @@ resource "azurerm_virtual_network_gateway" "onpremises-gateway" {
 
 #   depends_on = [ azurerm_virtual_network_gateway.onpremises-gateway , azurerm_local_network_gateway.OnPremises_local_gateway]
 # }
-#create the vm and assign the nic to vm
+
+//create the vm and assign the nic to vm
 resource "azurerm_windows_virtual_machine" "onpremises-vm" {
   name = "subnets-vm"
   resource_group_name = azurerm_resource_group.onpremises-rg.name
@@ -121,7 +122,7 @@ resource "azurerm_windows_virtual_machine" "onpremises-vm" {
  depends_on = [azurerm_resource_group.onpremises-rg, azurerm_network_interface.onpremises-nic ]
 }
 
-#create a route table
+ #create a route table
 resource "azurerm_route_table" "spoke1-udr" {
 
   name = "onpremises-udr-to-spoke1"
@@ -130,8 +131,9 @@ resource "azurerm_route_table" "spoke1-udr" {
 
   route {
     name = "route-to-firewall"
-    address_prefix = "10.2.0.0/16"
-    next_hop_type = "VirtualNetworkGateway"
+    address_prefix = "10.0.0.0/16"   //onpremises ip
+    next_hop_type = "VirtualAppliance"
+    next_hop_in_ip_address = "10.1.0.4"  //firewall ip
   
   }
   
@@ -141,5 +143,5 @@ resource "azurerm_route_table" "spoke1-udr" {
 resource "azurerm_subnet_route_table_association" "routetable--Associate" {
    subnet_id                 = azurerm_subnet.subnets["subnets-vm"].id
    route_table_id = azurerm_route_table.spoke1-udr.id
-   depends_on = [ azurerm_subnet.subnets , azurerm_route_table.spoke1-udr ]
+   depends_on = [ azurerm_subnet.subnets.id , azurerm_route_table.spoke1-udr ]
 }

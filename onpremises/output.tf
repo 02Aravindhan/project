@@ -14,6 +14,6 @@ output "onpremises-ip" {
  value = azurerm_public_ip.onpremises-ip
 }
 
-#  output "onpremises-Gateway" {
-#   value = azurerm_virtual_network_gateway.onpremises-gateway
-#  }
+ output "onpremises-Gateway" {
+  value = azurerm_virtual_network_gateway.onpremises-gateway
+ }

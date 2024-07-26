@@ -12,7 +12,9 @@ resource "azurerm_virtual_network" "spoke-3vnets" {
   resource_group_name = azurerm_resource_group.spoke-3rg.name
   depends_on          = [azurerm_resource_group.spoke-3rg]
  }
-resource "azurerm_subnet" "AppServiceSubnetsubnets" {
+
+
+resource "azurerm_subnet" "subnets" {
   for_each = var.subnets
 
   name   = each.key

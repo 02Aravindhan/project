@@ -10,11 +10,11 @@ vnets={
 
 subnets = {
      "Subnet1" = {
-            subnetname="Subnet1"
+            subnet_name="Subnet1"
             address_prefix="10.3.1.0/24"
             },
          "subnet2"={
-            subnetname="subnet2"
+            subnet_name="subnet2"
             address_prefix="10.3.2.0/24"
          }  
       }
@@ -26,4 +26,3 @@ subnets = {
 admin_username = "mass"
 admin_password = "aravindhan123@"
 
-rules_file = "rules"

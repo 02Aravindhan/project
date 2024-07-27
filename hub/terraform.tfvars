@@ -11,11 +11,11 @@ vnets={
 subnets = {
   
 "AzureFirewallSubnet"={
-            subnetname="AzureFirewallSubnet"
+            subnet_name="AzureFirewallSubnet"
             address_prefix="10.1.0.0/24"
         },
         "GatewaySubnet" = {
-            subnetname="GatewaySubnet"
+            subnet_name="GatewaySubnet"
             address_prefix="10.1.1.0/24"
             }
          } 

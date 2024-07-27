@@ -2,8 +2,8 @@ output "spoke_2rg" {
   value = azurerm_resource_group.spoke_2rg
 }
 
-output "Spoke_2vnet" {
-  value = azurerm_virtual_network.spoke2-vnet
+output "Spoke_2vnets" {
+  value = azurerm_virtual_network.spoke2-vnets
 }
 
 output "subnets" {
@@ -18,10 +18,10 @@ output "spoke2-appgateway" {
   value = azurerm_application_gateway.spoke2-appgateway
 }
 
-# output "route_table_ids" {
+output "route_table_ids" {
 
-#   value = {
-#     spoke1_udr = azurerm_route_table.spoke1-udr.id
-#     spoke2_udr = azurerm_route_table.spoke2-udr.id
-#   }
-# }
+  value = {
+    spoke1_udr = azurerm_route_table.spoke1-udr.id
+    spoke2_udr = azurerm_route_table.spoke2-udr.id
+  }
+}

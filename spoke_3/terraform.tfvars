@@ -11,7 +11,7 @@ vnets={
 subnets = {
   
  "AppServiceSubnet" = {
-             subnetname="AppServiceSubnet"
+             subnet_name="AppServiceSubnet"
             address_prefix="10.4.1.0/24"
              }
         

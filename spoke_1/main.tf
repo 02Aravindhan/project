@@ -19,7 +19,7 @@ resource "azurerm_subnet" "subnets" {
   address_prefixes =[each.value.address_prefix]
   resource_group_name = azurerm_resource_group.spoke_1rg.name
   depends_on = [ azurerm_resource_group.spoke_1rg , azurerm_virtual_network.spoke_1vnets]
-  virtual_network_name = azurerm_virtual_network.spoke_1vnets["vnets"].name
+  virtual_network_name = azurerm_virtual_network.spoke_1vnets["spoke_1vnets"].name
 }
 
 //spoke-1 nic
@@ -183,9 +183,9 @@ resource "azurerm_subnet_route_table_association" "spoke1udr_subnet_association"
     depends_on = [ azurerm_route_table.spoke1-udr ]
 }
 
- # connect the data from Hub Vnet for peering the Spoke_1 Vnet (Spoke_1 <--> Hub)
+ # connect the data from Hub Vnet for peering the Spoke_1 Vnet 
 data "azurerm_virtual_network" "hub_vnets" {
-  name = "hub-vnet"
+  name = "hub_vnets"
   resource_group_name = "hub-rg"
 }
 
@@ -193,7 +193,7 @@ data "azurerm_virtual_network" "hub_vnets" {
 resource "azurerm_virtual_network_peering" "Spoke_1-To-hub" {
   name                      = "Spoke_1-To-hub"
   resource_group_name       = azurerm_resource_group.spoke_1rg.name
-  virtual_network_name      = azurerm_virtual_network.spoke_1vnets[vnets].name
+  virtual_network_name      = azurerm_virtual_network.spoke_1vnets["spoke_1vnets"].name
   remote_virtual_network_id = data.azurerm_virtual_network.hub_vnets.id
   allow_virtual_network_access = true
   allow_forwarded_traffic   = true
@@ -206,7 +206,7 @@ resource "azurerm_virtual_network_peering" "hub-To-Spoke-1" {
   name                      = "hub-To-Spoke_1"
   resource_group_name       = data.azurerm_virtual_network.hub_vnets.resource_group_name
   virtual_network_name      = data.azurerm_virtual_network.hub_vnets.name
-  remote_virtual_network_id = azurerm_virtual_network.spoke_1vnets[vnets].id
+  remote_virtual_network_id = azurerm_virtual_network.spoke_1vnets["spoke_1vnets"].id
   allow_virtual_network_access = true
   allow_forwarded_traffic   = true
   allow_gateway_transit     = false

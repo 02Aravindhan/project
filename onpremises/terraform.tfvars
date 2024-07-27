@@ -11,11 +11,11 @@ vnets={
 subnets = {
   
          "GatewaySubnet" = {
-            subnetname="GatewaySubnet"
+            subnet_name="GatewaySubnet"
             address_prefix="10.0.1.0/24"
             },
          "subnet"={
-            subnetname="subnet"
+            subnet_name="subnet"
             address_prefix="10.0.2.0/24"
          }  
       }

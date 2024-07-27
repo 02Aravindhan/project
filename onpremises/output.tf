@@ -13,6 +13,10 @@ output "subnets" {
 output "onpremises-ip" {
  value = azurerm_public_ip.onpremises-ip
 }
+output "onpremises-vm" {
+  value = azurerm_windows_virtual_machine.onpremises-vm
+  sensitive = true
+}
 
  output "onpremises-Gateway" {
   value = azurerm_virtual_network_gateway.onpremises-gateway

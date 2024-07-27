@@ -1,4 +1,5 @@
 ONPREMISES RESOURCE GROUP:
+
     create to resource groups including virtual networks  with subnets and  virtual network gateway,vpn connection, the Local Network Gateway and Connection service for establish the connection between Onpremises and hub.
  
  DIAGRAM:

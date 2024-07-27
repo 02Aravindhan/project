@@ -1,7 +1,6 @@
 HUB RESOURCE GROUP:
 
-         create the resource groups including virtual networks  with subnets (AzureFirewall,VPN Gateway, and Subnet)  ,
-virtual network gateway,vpn connection, the Local Network Gateway and Connection service for establish the connection between onpremises and hub.
+         create the resource groups including virtual networks  with subnets (AzureFirewall,VPN Gateway, and Subnet) ,virtual network gateway,vpn connection, the Local Network Gateway and Connection service for establish the connection between onpremises and hub.
 
 DIAGRAM :
 

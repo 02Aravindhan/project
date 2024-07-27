@@ -1,6 +1,6 @@
 SPOKE_3 RESOURCE GROUP:
 
-    create to  resource group including  the virtual network with subnet , App service and app service plan.connect to the peering between spoke_3 and hub.
+create to  resource group including  the virtual network with subnet , App service and app service plan.connect to the peering between spoke_3 and hub.
 
 
 DIAGRAM:

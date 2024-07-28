@@ -22,6 +22,15 @@ resource "azurerm_subnet" "AppServiceSubnet" {
   resource_group_name = azurerm_resource_group.spoke-3rg.name
   depends_on = [ azurerm_resource_group.spoke-3rg , azurerm_virtual_network.spoke-3vnets]
   virtual_network_name = azurerm_virtual_network.spoke-3vnets["spoke-3vnets"].name
+   delegation {
+    name = "appservice_delegation"
+    service_delegation {
+      name = "Microsoft.Web/serverFarms"
+      actions = [
+        "Microsoft.Network/virtualNetworks/subnets/action"
+      ]
+    }
+  }
 }
 
 //app_service_plan
@@ -49,6 +58,14 @@ resource "azurerm_app_service" "spoke-3app-services" {
   depends_on = [ azurerm_resource_group.spoke-3rg,azurerm_app_service_plan.spoke-3plan ]
   
 }
+
+# integrate to hub
+resource "azurerm_app_service_virtual_network_swift_connection" "vnet-integration" {
+  app_service_id = azurerm_app_service.spoke-3app-services.id
+  subnet_id = azurerm_subnet.AppServiceSubnet["AppServiceSubnet"].id
+  depends_on = [ azurerm_app_service.spoke-3app-services , azurerm_subnet.AppServiceSubnet ]
+}
+
 
  #  connect to hub(Spoke-3 <--> Hub)
 

@@ -1,6 +1,6 @@
 # PROJECT
 
-![project](https://github.com/user-attachments/assets/7c36c926-4a74-4114-bb4a-d7bc47c931da)
+![project](https://github.com/user-attachments/assets/fa1406bd-9083-4bbb-a393-b0024794705f)
 
 
 

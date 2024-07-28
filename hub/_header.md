@@ -5,4 +5,6 @@ create the resource groups including virtual networks  with subnets (AzureFirewa
 DIAGRAM :
 
 
- ![Hub](https://github.com/user-attachments/assets/9b9f6ded-84f1-4135-9d4d-a70bb087f246)
+ ![Hub1](https://github.com/user-attachments/assets/4701ddf2-2f31-48e0-92b0-e7e5561b00e1)
+
+

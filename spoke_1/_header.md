@@ -5,4 +5,5 @@ SPOKE_1 RESOURCE GROUP:
  DIAGRAM:
 
 
-  ![spoke_1](https://github.com/user-attachments/assets/7a4a1d6e-495c-42d5-ae14-1eb461e59d59)
+  ![spoke_1](https://github.com/user-attachments/assets/0260d4f1-c224-4b31-a756-b89b67659694)
+

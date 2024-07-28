@@ -4,4 +4,5 @@ ONPREMISES RESOURCE GROUP:
 
  DIAGRAM:
     
-   ![onpremises](https://github.com/user-attachments/assets/5af51d88-8ee9-49fd-bbd1-ed8d76d7a7ec)
+   ![onpremises1](https://github.com/user-attachments/assets/532de99e-35f2-46d7-ba73-5ba3788d526b)
+

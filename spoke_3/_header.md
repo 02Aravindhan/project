@@ -6,5 +6,6 @@ create to  resource group including  the virtual network with subnet , App servi
 DIAGRAM:
 
 
- ![spoke_3](https://github.com/user-attachments/assets/d437b18f-374e-4d8c-880d-448c833f9bd8)
+ ![spoke_3](https://github.com/user-attachments/assets/a14a5dec-8fe0-4f5b-b0b8-5d4d64f5e7ec)
+
 

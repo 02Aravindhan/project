@@ -81,41 +81,41 @@ resource "azurerm_firewall_policy" "policy" {
 
 #firewall rule
 
-# resource "azurerm_firewall_policy_rule_collection_group" "icmp_rule" {
+resource "azurerm_firewall_policy_rule_collection_group" "icmp_rule" {
 
-#   name = "firewall-network-rule"
-#   firewall_policy_id = azurerm_firewall_policy.policy.id
-#   priority = 100
+  name = "firewall-network-rule"
+  firewall_policy_id = azurerm_firewall_policy.policy.id
+  priority = 100
 
-#   nat_rule_collection {          
-#     name     = "DNat-rule-collection"
-#     priority = 100
-#     action   = "DNat"
+  nat_rule_collection {          
+    name     = "DNat-rule-collection"
+    priority = 100
+    action   = "DNat"
 
-#     rule {
-#       name             = "Allow-RDP"
-#       source_addresses = ["49.37.211.244"]   
-#       destination_ports = ["3389"]
-#       destination_address = azurerm_public_ip.public_ips["AzureFirewallsubnet"].ip_address
-#       translated_address = "10.4.2.4"   
-#       translated_port    = "3389"
-#       protocols         = ["TCP"]
-#     }
-#   }
-#  network_rule_collection {
-#     name     = "AllowICMP_Rules"
-#     priority = 100
-#      action       = "Deny"
+    rule {
+      name             = "Allow-RDP"
+      source_addresses = ["49.37.211.244"]   
+      destination_ports = ["3389"]
+      destination_address = azurerm_public_ip.hub-public-ip["AzureFirewallSubnet"].ip_address
+      translated_address = "10.4.2.4"   
+      translated_port    = "3389"
+      protocols         = ["TCP"]
+    }
+  }
+ network_rule_collection {
+    name     = "AllowICMP_Rules"
+    priority = 100
+     action       = "Deny"
 
-#     rule {
-#       name         = "AllowICMP"
-#       protocols = ["Any"]
-#       destination_ports = ["*"]
-#       source_addresses = ["10.0.0.0/16"]  
-#       destination_addresses = ["10.2.0.0/16"]
-#     }
-#   }
-# }
+    rule {
+      name         = "AllowICMP"
+      protocols = ["Any"]
+      destination_ports = ["*"]
+      source_addresses = ["10.0.0.0/16"]  
+      destination_addresses = ["10.2.0.0/16"]
+    }
+  }
+}
 
 
  
@@ -201,7 +201,7 @@ data "azurerm_virtual_network" "spoke2-vnet" {
 resource "azurerm_virtual_network_peering" "spoke2-To-hub" {
   name                      = "Spoke_2-To-hub"
   resource_group_name       = azurerm_resource_group.spoke_2rg.name
-  virtual_network_name      = azurerm_virtual_network.spoke2-vnets.name
+  virtual_network_name      = azurerm_virtual_network.spoke2-vnets["spoke2-vnets"].name
   remote_virtual_network_id = data.azurerm_virtual_network.hub-vnets["hub_vnets"].id
   allow_virtual_network_access = true
   allow_forwarded_traffic   = true
@@ -214,7 +214,7 @@ resource "azurerm_virtual_network_peering" "hub-To-Spoke2" {
   name                      = "hub-To-Spoke_2"
   resource_group_name       = data.azurerm_virtual_network.hub_vnets.resource_group_name
   virtual_network_name      = data.azurerm_virtual_network.hub_vnets.name
-  remote_virtual_network_id = azurerm_virtual_network.spoke2-vnet.id
+  remote_virtual_network_id = azurerm_virtual_network.spoke2-vnets["spoke2-vnets"].id
   allow_virtual_network_access = true
   allow_forwarded_traffic   = true
   allow_gateway_transit     = false
@@ -232,7 +232,7 @@ data "azurerm_virtual_network" "spoke-3vnets" {
 resource "azurerm_virtual_network_peering" "Spoke_3-To-hub" {
   name                      = "Spoke_3-To-hub"
   resource_group_name       = azurerm_resource_group.spoke-3rg.name
-  virtual_network_name      = azurerm_virtual_network.spoke-3vnets.name
+  virtual_network_name      = azurerm_virtual_network.spoke-3vnets["spoke-3vnets"].name
   remote_virtual_network_id = data.azurerm_virtual_network.hub_vnets.id
   allow_virtual_network_access = true
   allow_forwarded_traffic   = true
@@ -246,11 +246,11 @@ resource "azurerm_virtual_network_peering" "hub-To-Spoke_3" {
   name                      = "hub-To-Spoke_3"
   resource_group_name       = data.azurerm_virtual_network.hub_vnets.resource_group_name
   virtual_network_name      = data.azurerm_virtual_network.hub_vnets.name
-  remote_virtual_network_id = azurerm_virtual_network.spoke-3vnets.id
+  remote_virtual_network_id = azurerm_virtual_network.spoke-3vnets["spoke-3vnets"].id
   allow_virtual_network_access = true
   allow_forwarded_traffic   = true
   allow_gateway_transit     = false
   use_remote_gateways       = false
-  depends_on = [ data.azurerm_virtual_network.spoke-3vnets , data.azurerm_virtual_network.hub_vnets ]
+  depends_on = [ azurerm_virtual_network.spoke-3vnets , data.azurerm_virtual_network.hub_vnets ]
 }
 

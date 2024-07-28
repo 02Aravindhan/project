@@ -134,24 +134,24 @@ resource "azurerm_network_security_group" "spoke_1nsg" {
 
 //storage-account
 
-# resource "azurerm_storage_account" "spoke_1storage-account" {
-#   name                     = "storageaccount"
-#   resource_group_name      = azurerm_resource_group.spoke_1rg.name
-#   location                 = "East US"
-#   account_tier             = "Standard"
-#   account_replication_type = "LRS"
+resource "azurerm_storage_account" "spoke_1storage-account" {
+  name                     = "storageaccount"
+  resource_group_name      = azurerm_resource_group.spoke_1rg.name
+  location                 = "East US"
+  account_tier             = "Standard"
+  account_replication_type = "LRS"
 
-#   depends_on = [ azurerm_resource_group.spoke_1rg ]
-# }
+  depends_on = [ azurerm_resource_group.spoke_1rg ]
+}
 
 //fileshare
 
-# resource "azurerm_storage_share" "spoke_1fileshare" {
-#   name                 = "fileshare"
-#   storage_account_name = azurerm_storage_account.spoke_1storage-account.name
-#   quota                = 5
-#   depends_on = [ azurerm_resource_group.spoke_1rg,azurerm_storage_account.spoke_1storage-account ]
-# }
+resource "azurerm_storage_share" "spoke_1fileshare" {
+  name                 = "fileshare"
+  storage_account_name = azurerm_storage_account.spoke_1storage-account.name
+  quota                = 5
+  depends_on = [ azurerm_resource_group.spoke_1rg,azurerm_storage_account.spoke_1storage-account ]
+}
 
 
 //route table for connect spoke1 and spoke2 through firewall
@@ -173,7 +173,7 @@ resource "azurerm_route_table" "spoke1-udr" {
 }
 
    
-//spoke_1udr subnet assocate
+# //spoke_1udr subnet assocate
 
 resource "azurerm_subnet_route_table_association" "spoke1udr_subnet_association" {
     for_each = var.subnets

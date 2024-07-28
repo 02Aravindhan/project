@@ -1,6 +1,7 @@
 # PROJECT
 
-![project](https://github.com/user-attachments/assets/97fa65b0-1017-4292-8f6a-bdf8f9a11d62)
+![project](https://github.com/user-attachments/assets/7c36c926-4a74-4114-bb4a-d7bc47c931da)
+
 
 
 HUB AND ONPREMISES NETWORK:

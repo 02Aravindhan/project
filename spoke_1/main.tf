@@ -153,6 +153,23 @@ resource "azurerm_storage_share" "spoke_1fileshare" {
   depends_on = [ azurerm_resource_group.spoke_1rg,azurerm_storage_account.spoke_1storage-account ]
 }
 
+# # Mount the fileshare to Vitrual Machine
+# resource "azurerm_virtual_machine_extension" "extension" {
+#   name                 = "vm-extension"
+#   virtual_machine_id   = azurerm_windows_virtual_machine.spoke_1vm.id
+#   publisher            = "Microsoft.Compute"
+#   type                 = "CustomScriptExtension"
+#   type_handler_version = "1.9"
+
+#   protected_settings = <<SETTINGS
+#   {
+#    "commandToExecute": "powershell -command \"[System.Text.Encoding]::UTF8.GetString([System.Convert]::FromBase64String('${local.base64EncodedScript }')) | Out-File -filepath postBuild.ps1\" && powershell -ExecutionPolicy Unrestricted -File postBuild.ps1"
+#   }
+#   SETTINGS
+
+#   depends_on = [azurerm_windows_virtual_machine.spoke_1vm]
+# }
+
 
 //route table for connect spoke1 and spoke2 through firewall
 

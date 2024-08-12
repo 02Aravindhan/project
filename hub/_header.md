@@ -8,14 +8,16 @@ DIAGRAM :
  ![Hub1](https://github.com/user-attachments/assets/4701ddf2-2f31-48e0-92b0-e7e5561b00e1)
 
 
- Apply the Terraform configurations :
+ ###Apply the Terraform configurations :
 
   Deploy the resources using Terraform,
-
-     terraform init
-
-     
-          terraform plan
-
-             terraform apply
+```
+terraform init
+```
+```
+terraform plan
+```
+```
+terraform apply
+```
 

@@ -9,3 +9,15 @@ DIAGRAM:
  ![spoke_3](https://github.com/user-attachments/assets/a14a5dec-8fe0-4f5b-b0b8-5d4d64f5e7ec)
 
 
+### Apply the Terraform configurations :
+
+  Deploy the resources using Terraform,
+```
+terraform init
+```
+```
+terraform plan
+```
+```
+terraform apply
+```

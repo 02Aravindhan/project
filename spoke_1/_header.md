@@ -7,3 +7,15 @@ SPOKE_1 RESOURCE GROUP:
 
   ![spoke_1](https://github.com/user-attachments/assets/0260d4f1-c224-4b31-a756-b89b67659694)
 
+### Apply the Terraform configurations :
+
+  Deploy the resources using Terraform,
+```
+terraform init
+```
+```
+terraform plan
+```
+```
+terraform apply
+```

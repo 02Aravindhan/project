@@ -6,3 +6,15 @@ ONPREMISES RESOURCE GROUP:
     
    ![onpremises1](https://github.com/user-attachments/assets/532de99e-35f2-46d7-ba73-5ba3788d526b)
 
+### Apply the Terraform configurations :
+
+  Deploy the resources using Terraform,
+```
+terraform init
+```
+```
+terraform plan
+```
+```
+terraform apply
+```

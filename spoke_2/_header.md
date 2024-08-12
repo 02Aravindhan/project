@@ -5,4 +5,16 @@ SPOKE_2 RESOURCE GROUP:
 DIAGRAM:
 
  ![spoke_2](https://github.com/user-attachments/assets/0898959a-0ac1-40d5-afcf-cedc2a091a38)
- 
+
+### Apply the Terraform configurations :
+
+  Deploy the resources using Terraform,
+```
+terraform init
+```
+```
+terraform plan
+```
+```
+terraform apply
+```

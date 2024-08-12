@@ -11,7 +11,7 @@ Apply the Terraform configurations :
 
 Deploy the resources using Terraform,
 
-terraform init
-terraform plan
-terraform apply
+    terraform init
+    terraform plan
+    terraform apply
 

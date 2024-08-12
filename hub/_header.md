@@ -13,6 +13,8 @@ DIAGRAM :
   Deploy the resources using Terraform,
 
     terraform init
+
     terraform plan
+    
     terraform apply
 

@@ -1,6 +1,6 @@
 # PROJECT
 
-![over all draw](https://github.com/user-attachments/assets/7f0e4ea7-9ec6-478e-a1f9-2c10c57729c2)
+![over all draw](https://github.com/user-attachments/assets/f04003d6-68d2-494b-8948-73805e4c9d42)
 
 
 

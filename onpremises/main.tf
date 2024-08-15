@@ -42,6 +42,49 @@ resource "azurerm_public_ip" "onpremises-ip" {
   allocation_method   = "Static"
 }
 
+data "azurerm_client_config" "current" {}
+data "azuread_client_config" "current" {}
+
+# key_vault
+resource "azurerm_key_vault" "Key_vault" {
+  name                        = "KeyVault4646"
+  resource_group_name = azurerm_resource_group.onpremises-rg.name
+  location = azurerm_resource_group.onpremises-rg.location
+  sku_name                    = "standard"
+  tenant_id                   = data.azurerm_client_config.current.tenant_id
+  purge_protection_enabled    = true
+  soft_delete_retention_days = 30
+  access_policy {
+    tenant_id = data.azurerm_client_config.current.tenant_id
+    object_id = data.azuread_client_config.current.object_id
+ 
+    secret_permissions = [
+      "Get",
+      "Set",
+    ]
+  }
+  depends_on = [ azurerm_resource_group.onpremises-rg ]
+}
+
+// Key vault Username
+ 
+resource "azurerm_key_vault_secret" "vm_admin_username" {
+  name         = "onpremiseskeyvault8818"
+  value        = var.admin_username
+  key_vault_id = azurerm_key_vault.Key_vault.id
+  depends_on = [ azurerm_key_vault.Key_vault ]
+}
+ 
+// Key vault Password
+ 
+resource "azurerm_key_vault_secret" "vm_admin_password" {
+  name         = "onpremiseskeyvault8818password"
+  value        = var.admin_password
+  key_vault_id = azurerm_key_vault.Key_vault.id
+  depends_on = [ azurerm_key_vault.Key_vault ]
+}
+
+
 //onpremises-gateway
 
  resource "azurerm_virtual_network_gateway" "onpremises-gateway" {
@@ -66,7 +109,7 @@ resource "azurerm_public_ip" "onpremises-ip" {
 
 #  the data from Hub Gateway Public_IP (IP_addr)
 data "azurerm_public_ip" "Hub-VPN-GW-public-ip" {
- name = "GatewaySubnet-IP"
+ name = "GatewaySubnet-ip"
   resource_group_name = "hub-rg"
 }
 
@@ -134,6 +177,7 @@ resource "azurerm_route_table" "onpremises-udr-spoke1" {
     name = "route-to-firewall"
     address_prefix = "10.2.0.0/16"   //spoke_1 ip  sp1 to onprem udr
     next_hop_type = "VirtualAppliance"
+    next_hop_in_ip_address = "10.1.0.4"
     
   }
   depends_on = [ azurerm_resource_group.onpremises-rg ]

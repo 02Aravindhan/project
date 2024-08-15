@@ -23,6 +23,4 @@ subnets = {
        
 
         
-admin_username = "mass"
-admin_password = "aravindhan123@"
 

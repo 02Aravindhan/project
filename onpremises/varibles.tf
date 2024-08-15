@@ -41,4 +41,4 @@ variable "admin_password" {
   type        = string
   description = "The Password of the User"
   sensitive   = true
-}
+} 

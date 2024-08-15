@@ -36,48 +36,24 @@ resource "azurerm_network_interface" "spoke-1nic" {
   }
   depends_on = [ azurerm_resource_group.spoke_1rg,azurerm_subnet.subnets ]
  }
-
-data "azurerm_client_config" "current" {}
-data "azuread_client_config" "current" {}
-
-# key_vault
-resource "azurerm_key_vault" "Key_vault" {
-  name                        = "KeyVault8818"
-  resource_group_name = azurerm_resource_group.spoke_1rg.name
-  location = azurerm_resource_group.spoke_1rg.location
-  sku_name                    = "standard"
-  tenant_id                   = data.azurerm_client_config.current.tenant_id
-  purge_protection_enabled    = true
-  soft_delete_retention_days = 30
-  access_policy {
-    tenant_id = data.azurerm_client_config.current.tenant_id
-    object_id = data.azuread_client_config.current.object_id
- 
-    secret_permissions = [
-      "Get",
-      "Set",
-    ]
-  }
-  depends_on = [ azurerm_resource_group.spoke_1rg ]
+# key vault
+data "azurerm_key_vault" "Key_vault" {
+  name                = "KeyVault4646"
+  resource_group_name = "onpremises-rg"
 }
 
-// Key vault Username
- 
-resource "azurerm_key_vault_secret" "vm_admin_username" {
-  name         = "spokekeyvault8818"
-  value        = var.admin_username
-  key_vault_id = azurerm_key_vault.Key_vault.id
-  depends_on = [ azurerm_key_vault.Key_vault ]
+#  username 
+data "azurerm_key_vault_secret" "vm_admin_username" {
+  name         = "onpremiseskeyvault8818"
+  key_vault_id = data.azurerm_key_vault.Key_vault.id
 }
- 
-// Key vault Password
- 
-resource "azurerm_key_vault_secret" "vm_admin_password" {
-  name         = "spokekeyvault8818password"
-  value        = var.admin_password
-  key_vault_id = azurerm_key_vault.Key_vault.id
-  depends_on = [ azurerm_key_vault.Key_vault ]
+
+#  password 
+data "azurerm_key_vault_secret" "vm_admin_password" {
+  name         = "onpremiseskeyvault8818password"
+  key_vault_id = data.azurerm_key_vault.Key_vault.id
 }
+
 
 #Create the Network Security Group with Rules
 resource "azurerm_network_security_group" "spoke_1nsg" {
@@ -113,8 +89,8 @@ resource "azurerm_network_security_group" "spoke_1nsg" {
   location            = azurerm_resource_group.spoke_1rg.location
   resource_group_name = azurerm_resource_group.spoke_1rg.name
   size                  = "Standard_DS1_v2"
-  admin_username        = var.admin_username
-  admin_password        = var.admin_password
+  admin_username        = data.azurerm_key_vault_secret.vm_admin_username.value
+  admin_password        = data.azurerm_key_vault_secret.vm_admin_password.value
   network_interface_ids = [azurerm_network_interface.spoke-1nic[each.key].id]
  
   os_disk {
@@ -129,13 +105,13 @@ resource "azurerm_network_security_group" "spoke_1nsg" {
     sku       = "2019-Datacenter"
     version   = "latest"
   }
-  depends_on = [azurerm_resource_group.spoke_1rg,azurerm_network_interface.spoke-1nic ,azurerm_key_vault.Key_vault]
+  depends_on = [azurerm_resource_group.spoke_1rg,azurerm_network_interface.spoke-1nic ,data.azurerm_key_vault.Key_vault]
 }
 
 //storage-account
 
 resource "azurerm_storage_account" "spoke_1storage-account" {
-  name                     = "storageaccount"
+  name                     = "aravindstacc46461"
   resource_group_name      = azurerm_resource_group.spoke_1rg.name
   location                 = "East US"
   account_tier             = "Standard"

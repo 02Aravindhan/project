@@ -116,6 +116,23 @@ backend_http_settings_name = "appGatewayBackendHttpSettings"
 depends_on = [ azurerm_resource_group.spoke_2rg,azurerm_subnet.subnets,azurerm_public_ip.public-ip ]
 
 }
+# key vault
+data "azurerm_key_vault" "Key_vault" {
+  name                = "KeyVault4646"
+  resource_group_name = "onpremises-rg"
+}
+
+#  username 
+data "azurerm_key_vault_secret" "vm_admin_username" {
+  name         = "onpremiseskeyvault8818"
+  key_vault_id = data.azurerm_key_vault.Key_vault.id
+}
+
+#  password 
+data "azurerm_key_vault_secret" "vm_admin_password" {
+  name         = "onpremiseskeyvault8818password"
+  key_vault_id = data.azurerm_key_vault.Key_vault.id
+}
 
 //vmss
 
@@ -125,8 +142,8 @@ resource "azurerm_windows_virtual_machine_scale_set" "vmss" {
   location = azurerm_resource_group.spoke_2rg.location
   sku = "Standard_DS1_v2"
   instances = 2
-  admin_username = var.admin_username                 #data.azurerm_key_vault_secret.admin_username.value
-  admin_password = var.admin_password                    #data.azurerm_key_vault_secret.admin_password.value
+  admin_username = data.azurerm_key_vault_secret.vm_admin_username.value
+  admin_password = data.azurerm_key_vault_secret.vm_admin_password.value
  
   network_interface {
     name = "myvmss"

@@ -17,12 +17,9 @@ output "subnets" {
 
 
 
-output "Key_Vault" {
-  value = azurerm_key_vault.Key_vault
-}
 
 
 
-#  output "fileshare" {
-#    value = azurerm_storage_share.fileshare
-#  }
+ output "fileshare" {
+   value = azurerm_storage_share.spoke_1fileshare
+ }

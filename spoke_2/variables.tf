@@ -32,16 +32,7 @@ variable "subnets" {
   description = "The details of the Subnets"
 }
 
-variable "admin_username" {
-  type        = string
-  description = "The Username of the User"
-}
 
-variable "admin_password" {
-  type        = string
-  description = "The Password of the User"
-  sensitive   = true
-}
 variable "rules_file" {
   type = string
   description = "The name of CSV file containing NSG rules"

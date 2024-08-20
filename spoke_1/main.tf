@@ -38,7 +38,7 @@ resource "azurerm_network_interface" "spoke-1nic" {
  }
 # key vault
 data "azurerm_key_vault" "Key_vault" {
-  name                = "KeyVault4646"
+  name                = "KeyVault4648"
   resource_group_name = "onpremises-rg"
 }
 

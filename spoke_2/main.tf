@@ -118,7 +118,7 @@ depends_on = [ azurerm_resource_group.spoke_2rg,azurerm_subnet.subnets,azurerm_p
 }
 # key vault
 data "azurerm_key_vault" "Key_vault" {
-  name                = "KeyVault4646"
+  name                = "KeyVault4648"
   resource_group_name = "onpremises-rg"
 }
 

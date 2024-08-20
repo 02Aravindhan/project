@@ -47,7 +47,7 @@ data "azuread_client_config" "current" {}
 
 # key_vault
 resource "azurerm_key_vault" "Key_vault" {
-  name                        = "KeyVault4646"
+  name                        = "KeyVault4648"
   resource_group_name = azurerm_resource_group.onpremises-rg.name
   location = azurerm_resource_group.onpremises-rg.location
   sku_name                    = "standard"

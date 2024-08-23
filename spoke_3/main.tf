@@ -95,7 +95,7 @@ resource "azurerm_virtual_network_peering" "hub-To-Spoke3" {
   remote_virtual_network_id = azurerm_virtual_network.spoke-3vnets["spoke-3vnets"].id
   allow_virtual_network_access = true
   allow_forwarded_traffic   = true
-  allow_gateway_transit     = false
+  allow_gateway_transit     = true
   use_remote_gateways       = false
   depends_on = [ azurerm_virtual_network.spoke-3vnets , data.azurerm_virtual_network.hub_vnets ]
 }

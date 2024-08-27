@@ -5,7 +5,7 @@ SPOKE\_1 RESOURCE GROUP:
 
  DIAGRAM:
 
-  ![spoke\_1](https://github.com/user-attachments/assets/0260d4f1-c224-4b31-a756-b89b67659694)
+  ![spoke_1](https://github.com/user-attachments/assets/77bee6d5-b2ef-4649-947b-ee52a8db638f)
 
 ### Apply the Terraform configurations :
 

@@ -1,7 +1,7 @@
 <!-- BEGIN_TF_DOCS -->
 ONPREMISES RESOURCE GROUP:
 
- create to resource groups including virtual networks  with subnets and  virtual network gateway,vpn connection, the Local Network     Gateway and Connection service for establish the connection between Onpremises and hub.
+ create to resource groups including virtual networks  with subnets and  virtual network gateway,vpn connection, the Local Network     Gateway and Connection service for establish the connection between Onpremises and hub.the Azure Key valut service to store the virtual machine to username and password. 
 
  DIAGRAM:
     
